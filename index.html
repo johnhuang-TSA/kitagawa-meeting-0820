@@ -117,24 +117,43 @@ h1{
 }
 .logistics dd{margin:0;font-size:14px;font-weight:500;line-height:1.5}
 
-/* ===== palette picker (always visible) ===== */
-.palette{
-  margin:22px 0 0;border:1px solid var(--line);border-radius:5px;
-  background:var(--surface);box-shadow:var(--shadow);padding:16px 18px;
+/* ===== floating palette dock (bottom-right) ===== */
+.palette-dock{
+  position:fixed;right:20px;bottom:20px;z-index:80;
+  display:flex;flex-direction:column;align-items:flex-end;gap:10px;
 }
+.palette-fab{
+  display:inline-flex;align-items:center;gap:9px;padding:10px 16px;
+  border:1px solid var(--line-strong);border-radius:24px;background:var(--surface);
+  color:var(--ink);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;
+  box-shadow:0 2px 6px rgba(23,33,42,.10),0 10px 28px -12px rgba(23,33,42,.42);
+  transition:border-color .14s,transform .14s;
+}
+.palette-fab:hover{border-color:var(--accent);transform:translateY(-1px)}
+.palette-fab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fablabel{letter-spacing:.02em}
+.palette-panel{
+  width:min(320px,calc(100vw - 40px));max-height:min(70vh,560px);overflow-y:auto;
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;
+  padding:16px 18px;box-shadow:0 4px 12px rgba(23,33,42,.10),0 18px 44px -18px rgba(23,33,42,.5);
+}
+.palette-panel[hidden]{display:none}
 .phead{display:flex;align-items:center;gap:9px;margin-bottom:3px}
-.pdot{display:inline-flex}
-.pdot i{width:13px;height:13px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.08)}
+.pdot{display:inline-flex;flex:none}
+.pdot i{width:13px;height:13px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.10)}
 .pdot i:last-child{margin-left:-4px}
-.phead h2{
-  font-family:"Noto Sans TC",sans-serif;font-size:14px;font-weight:700;
-  margin:0;letter-spacing:.01em;
+.phead h2{font-family:"Noto Sans TC",sans-serif;font-size:14px;font-weight:700;margin:0}
+.pclose{
+  margin-left:auto;background:none;border:none;color:var(--muted);
+  font-size:20px;line-height:1;cursor:pointer;padding:0 2px;font-family:inherit;
 }
-.palette .hint{font-size:12.5px;color:var(--muted);margin:0 0 13px}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:8px}
+.pclose:hover{color:var(--ink)}
+.pclose:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+.palette-panel .hint{font-size:12px;color:var(--muted);margin:0 0 13px;line-height:1.55}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:7px}
 .swatch{
-  display:flex;align-items:center;gap:10px;padding:9px 11px;
-  border:1px solid var(--line);border-radius:5px;background:var(--surface);
+  display:flex;align-items:center;gap:9px;padding:8px 10px;
+  border:1px solid var(--line);border-radius:6px;background:var(--surface);
   cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);
   transition:border-color .14s,background .14s;
 }
@@ -142,44 +161,47 @@ h1{
 .swatch:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .swatch[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .swatch .chips{display:flex;flex:none}
-.swatch .chips i{width:16px;height:16px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.08)}
+.swatch .chips i{width:15px;height:15px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.10)}
 .swatch .chips i:last-child{margin-left:-5px}
 .swatch .txt{min-width:0}
-.swatch .nm{display:block;font-size:13px;font-weight:500;line-height:1.35}
-.swatch .sb{display:block;font-size:11px;color:var(--muted);line-height:1.35}
-.swatch .tick{margin-left:auto;color:var(--accent);font-size:13px;opacity:0;flex:none}
+.swatch .nm{display:block;font-size:12.5px;font-weight:500;line-height:1.3}
+.swatch .sb{display:block;font-size:10.5px;color:var(--muted);line-height:1.3}
+.swatch .tick{margin-left:auto;color:var(--accent);font-size:12px;opacity:0;flex:none}
 .swatch[aria-pressed="true"] .tick{opacity:1}
 
-
-.palette .prow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.palette .plabel{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted);font-weight:600;min-width:40px;
-}
-.ggrid{display:flex;gap:7px;flex-wrap:wrap}
-.gbtn{
-  display:inline-flex;align-items:center;gap:7px;padding:6px 12px;
-  border:1px solid var(--line);border-radius:20px;background:var(--surface);
-  cursor:pointer;font-family:inherit;font-size:12.5px;color:var(--ink);
-  transition:border-color .14s,background .14s;
-}
-.gbtn:hover{border-color:var(--line-strong);background:var(--surface-2)}
-.gbtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.gbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:500}
-.gsw{width:13px;height:13px;border-radius:50%;display:block;border:1px solid var(--line-strong);flex:none}
-.gsw.light{background:#FFFFFF}
-.gsw.dark{background:#10171B}
-.gsw.auto{background:linear-gradient(135deg,#FFFFFF 0 50%,#10171B 50% 100%)}
-.palette .divider{height:1px;background:var(--line);margin:13px 0}
-
-/* ===== nav ===== */
+/* ===== nav — chips by default, fixed left rail on wide screens ===== */
 nav{display:flex;flex-wrap:wrap;gap:6px;padding:22px 0 0;margin-bottom:40px}
+.navtitle{display:none}
 nav a{
   font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.04em;
   color:var(--muted);text-decoration:none;padding:5px 10px;
   border:1px solid var(--line);border-radius:2px;background:var(--surface);transition:.14s;
 }
 nav a:hover,nav a:focus-visible{color:var(--accent);border-color:var(--accent);outline:none}
+
+@media (min-width:1240px){
+  body{padding-left:216px}
+  nav{
+    position:fixed;left:0;top:0;bottom:0;width:216px;z-index:70;
+    display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:1px;
+    padding:34px 16px 24px;margin:0;overflow-y:auto;
+    background:var(--surface);border-right:1px solid var(--line);
+  }
+  .navtitle{
+    display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    font-weight:600;padding:0 10px;margin-bottom:12px;
+  }
+  nav a{
+    border:none;border-left:2px solid var(--line);border-radius:0;
+    background:transparent;padding:7px 12px;font-size:12px;line-height:1.45;
+  }
+  nav a:hover,nav a:focus-visible{border-color:var(--line-strong);background:var(--surface-2)}
+  nav a.active{
+    color:var(--accent);border-left-color:var(--accent);
+    background:var(--accent-soft);font-weight:600;
+  }
+}
 
 /* ===== sections ===== */
 section{margin:0 0 56px;scroll-margin-top:20px}
@@ -292,7 +314,8 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
 }
 @media print{
   body{background:#fff}
-  .palette,nav{display:none}
+  .palette-dock,nav{display:none}
+  body{padding-left:0}
   .card,.qblock,.dcard,.script,.stance{box-shadow:none;break-inside:avoid}
   section{break-inside:avoid-page}
 }
@@ -314,64 +337,10 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
     <div><dt>對方</dt><dd>Lawrence（西北 台灣）</dd></div>
     <div><dt>品牌</dt><dd>優固倍 Yakupet</dd></div>
   </dl>
-
-  <div class="palette">
-    <div class="phead">
-      <span class="pdot"><i style="background:var(--p1)"></i><i style="background:var(--p2)"></i></span>
-      <h2>配色主題</h2>
-    </div>
-    <p class="hint">底色與主色都可以自己選，只改動本頁視覺，內容不變。選擇會自動記住。</p>
-
-    <div class="prow">
-      <span class="plabel">底色</span>
-      <div class="ggrid" id="ggrid">
-        <button type="button" class="gbtn" data-mode="light" aria-pressed="false"><span class="gsw light"></span>淺色白底</button>
-        <button type="button" class="gbtn" data-mode="dark" aria-pressed="false"><span class="gsw dark"></span>深色</button>
-        <button type="button" class="gbtn" data-mode="auto" aria-pressed="true"><span class="gsw auto"></span>跟隨系統</button>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="prow"><span class="plabel">主色</span></div>
-    <div class="pgrid" id="pgrid">
-      <button type="button" class="swatch" data-key="ink" aria-pressed="true">
-        <span class="chips"><i style="background:#0E5C57"></i><i style="background:#8A6A17"></i></span>
-        <span class="txt"><span class="nm">深青墨</span><span class="sb">預設 · 規格書</span></span><span class="tick">✓</span>
-      </button>
-      <button type="button" class="swatch" data-key="steel" aria-pressed="false">
-        <span class="chips"><i style="background:#1F4E79"></i><i style="background:#B26A00"></i></span>
-        <span class="txt"><span class="nm">靛藍鋼</span><span class="sb">沉穩商務</span></span><span class="tick">✓</span>
-      </button>
-      <button type="button" class="swatch" data-key="forest" aria-pressed="false">
-        <span class="chips"><i style="background:#2B5D3A"></i><i style="background:#9A6B25"></i></span>
-        <span class="txt"><span class="nm">森綠</span><span class="sb">天然草本</span></span><span class="tick">✓</span>
-      </button>
-      <button type="button" class="swatch" data-key="clay" aria-pressed="false">
-        <span class="chips"><i style="background:#8C3A2E"></i><i style="background:#2E6E6A"></i></span>
-        <span class="txt"><span class="nm">陶紅</span><span class="sb">溫暖手感</span></span><span class="tick">✓</span>
-      </button>
-      <button type="button" class="swatch" data-key="wisteria" aria-pressed="false">
-        <span class="chips"><i style="background:#5B4A8A"></i><i style="background:#A8642A"></i></span>
-        <span class="txt"><span class="nm">紫藤</span><span class="sb">優雅</span></span><span class="tick">✓</span>
-      </button>
-      <button type="button" class="swatch" data-key="amber" aria-pressed="false">
-        <span class="chips"><i style="background:#A85527"></i><i style="background:#2F6B62"></i></span>
-        <span class="txt"><span class="nm">琥珀橙</span><span class="sb">明亮活力</span></span><span class="tick">✓</span>
-      </button>
-      <button type="button" class="swatch" data-key="sakura" aria-pressed="false">
-        <span class="chips"><i style="background:#B04A6E"></i><i style="background:#4A6FA5"></i></span>
-        <span class="txt"><span class="nm">桃櫻粉</span><span class="sb">甜柔</span></span><span class="tick">✓</span>
-      </button>
-      <button type="button" class="swatch" data-key="neon" aria-pressed="false">
-        <span class="chips"><i style="background:#0E7C8A"></i><i style="background:#B8503F"></i></span>
-        <span class="txt"><span class="nm">霓虹青</span><span class="sb">鮮明</span></span><span class="tick">✓</span>
-      </button>
-    </div>
-  </div>
 </header>
 
-<nav>
+<nav id="toc">
+  <span class="navtitle">目錄</span>
   <a href="#goals">本次會議目標</a>
   <a href="#them">對方是誰</a>
   <a href="#lineup">★ 他們的產品線</a>
@@ -698,6 +667,67 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
 
 </div>
 
+<div class="palette-dock" id="paletteDock">
+  <div class="palette-panel" id="palettePanel" hidden>
+    <div class="phead">
+      <span class="pdot"><i style="background:var(--p1)"></i><i style="background:var(--p2)"></i></span>
+      <h2>配色主題</h2>
+      <button type="button" class="pclose" id="paletteClose" aria-label="關閉配色面板">&times;</button>
+    </div>
+    <p class="hint">只改動本頁視覺，內容不變。選擇會自動記住。</p>
+    <div class="prow">
+      <span class="plabel">底色</span>
+      <div class="ggrid" id="ggrid">
+        <button type="button" class="gbtn" data-mode="light" aria-pressed="false"><span class="gsw light"></span>淺色白底</button>
+        <button type="button" class="gbtn" data-mode="dark" aria-pressed="false"><span class="gsw dark"></span>深色</button>
+        <button type="button" class="gbtn" data-mode="auto" aria-pressed="true"><span class="gsw auto"></span>跟隨系統</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="prow"><span class="plabel">主色</span></div>
+    <div class="pgrid" id="pgrid">
+      <button type="button" class="swatch" data-key="ink" aria-pressed="true">
+        <span class="chips"><i style="background:#0E5C57"></i><i style="background:#8A6A17"></i></span>
+        <span class="txt"><span class="nm">深青墨</span><span class="sb">預設 · 規格書</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="steel" aria-pressed="false">
+        <span class="chips"><i style="background:#1F4E79"></i><i style="background:#B26A00"></i></span>
+        <span class="txt"><span class="nm">靛藍鋼</span><span class="sb">沉穩商務</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="forest" aria-pressed="false">
+        <span class="chips"><i style="background:#2B5D3A"></i><i style="background:#9A6B25"></i></span>
+        <span class="txt"><span class="nm">森綠</span><span class="sb">天然草本</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="clay" aria-pressed="false">
+        <span class="chips"><i style="background:#8C3A2E"></i><i style="background:#2E6E6A"></i></span>
+        <span class="txt"><span class="nm">陶紅</span><span class="sb">溫暖手感</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="wisteria" aria-pressed="false">
+        <span class="chips"><i style="background:#5B4A8A"></i><i style="background:#A8642A"></i></span>
+        <span class="txt"><span class="nm">紫藤</span><span class="sb">優雅</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="amber" aria-pressed="false">
+        <span class="chips"><i style="background:#A85527"></i><i style="background:#2F6B62"></i></span>
+        <span class="txt"><span class="nm">琥珀橙</span><span class="sb">明亮活力</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="sakura" aria-pressed="false">
+        <span class="chips"><i style="background:#B04A6E"></i><i style="background:#4A6FA5"></i></span>
+        <span class="txt"><span class="nm">桃櫻粉</span><span class="sb">甜柔</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="neon" aria-pressed="false">
+        <span class="chips"><i style="background:#0E7C8A"></i><i style="background:#B8503F"></i></span>
+        <span class="txt"><span class="nm">霓虹青</span><span class="sb">鮮明</span></span><span class="tick">✓</span>
+      </button>
+    </div>
+  </div>
+  <button type="button" class="palette-fab" id="paletteFab" aria-expanded="false" aria-controls="palettePanel">
+    <span class="pdot"><i style="background:var(--p1)"></i><i style="background:var(--p2)"></i></span>
+    <span class="fablabel">配色</span>
+  </button>
+</div>
+
 <script>
 (function(){
   var KEY="tsa-kitagawa-palette";
@@ -733,6 +763,50 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
     var gs=null;
     try{ gs=localStorage.getItem(GKEY); }catch(e){}
     setGround(gs||"auto",false);
+  }
+
+  /* --- floating palette open / close --- */
+  var fab=document.getElementById("paletteFab"),
+      panel=document.getElementById("palettePanel"),
+      closeBtn=document.getElementById("paletteClose"),
+      dock=document.getElementById("paletteDock");
+  function setOpen(o){
+    if(!fab||!panel) return;
+    panel.hidden=!o;
+    fab.setAttribute("aria-expanded",o?"true":"false");
+  }
+  if(fab&&panel){
+    fab.addEventListener("click",function(e){ e.stopPropagation(); setOpen(panel.hidden); });
+    if(closeBtn) closeBtn.addEventListener("click",function(){ setOpen(false); fab.focus(); });
+    document.addEventListener("click",function(e){
+      if(!panel.hidden && dock && !dock.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener("keydown",function(e){
+      if(e.key==="Escape" && !panel.hidden){ setOpen(false); fab.focus(); }
+    });
+  }
+
+  /* --- scroll spy for the left rail --- */
+  var links=Array.prototype.slice.call(document.querySelectorAll("nav#toc a"));
+  if(links.length && "IntersectionObserver" in window){
+    var map={},visible={};
+    links.forEach(function(a){
+      var id=a.getAttribute("href").slice(1);
+      var t=document.getElementById(id);
+      if(t){ map[id]=a; visible[id]=0; }
+    });
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        visible[en.target.id]=en.isIntersecting?en.intersectionRatio:0;
+      });
+      var best=null,bestV=0;
+      Object.keys(visible).forEach(function(id){
+        if(visible[id]>bestV){ bestV=visible[id]; best=id; }
+      });
+      links.forEach(function(a){ a.classList.remove("active"); });
+      if(best&&map[best]) map[best].classList.add("active");
+    },{rootMargin:"-12% 0px -68% 0px",threshold:[0,.25,.5,1]});
+    Object.keys(map).forEach(function(id){ io.observe(document.getElementById(id)); });
   }
 })();
 </script>
