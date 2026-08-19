@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KITAGAWA 化毛膏開發會談</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+/* ===== palette definitions (primary / secondary) ===== */
+:root,
+:root[data-palette="ink"]      { --p1:#0E5C57; --p2:#8A6A17; }
+:root[data-palette="steel"]    { --p1:#1F4E79; --p2:#B26A00; }
+:root[data-palette="forest"]   { --p1:#2B5D3A; --p2:#9A6B25; }
+:root[data-palette="clay"]     { --p1:#8C3A2E; --p2:#2E6E6A; }
+:root[data-palette="wisteria"] { --p1:#5B4A8A; --p2:#A8642A; }
+:root[data-palette="amber"]    { --p1:#A85527; --p2:#2F6B62; }
+:root[data-palette="sakura"]   { --p1:#B04A6E; --p2:#4A6FA5; }
+:root[data-palette="neon"]     { --p1:#0E7C8A; --p2:#B8503F; }
+
+:root{
+  --paper:#F4F6F4;
+  --surface:#FFFFFF;
+  --surface-2:#EDF1EF;
+  --ink:#17212A;
+  --muted:#64717B;
+  --line:#DDE4E1;
+  --line-strong:#C3CFCA;
+  --flag:#9E3520;
+  --flag-soft:#F7E4DF;
+  --good:#2C6E4F;
+  --accent:var(--p1);
+  --accent-2:var(--p2);
+  --accent-soft:#E7EFED;
+  --accent-soft:color-mix(in srgb, var(--p1) 12%, var(--surface));
+  --accent-2-soft:#F1ECDD;
+  --accent-2-soft:color-mix(in srgb, var(--p2) 14%, var(--surface));
+  --shadow:0 1px 2px rgba(23,33,42,.05),0 8px 24px -16px rgba(23,33,42,.28);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171B;
+    --surface:#182028;
+    --surface-2:#1E2830;
+    --ink:#E6ECE9;
+    --muted:#94A1A9;
+    --line:#2A343C;
+    --line-strong:#3A4750;
+    --flag:#E4917A;
+    --flag-soft:#37211B;
+    --good:#74C298;
+    --accent:#7FC7BE;
+    --accent:color-mix(in srgb, var(--p1) 48%, #EDF4F2);
+    --accent-2:#D9B778;
+    --accent-2:color-mix(in srgb, var(--p2) 52%, #F4EEE0);
+    --accent-soft:#1D2E31;
+    --accent-soft:color-mix(in srgb, var(--p1) 30%, var(--surface));
+    --accent-2-soft:#2B2A20;
+    --accent-2-soft:color-mix(in srgb, var(--p2) 26%, var(--surface));
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171B;
+  --surface:#182028;
+  --surface-2:#1E2830;
+  --ink:#E6ECE9;
+  --muted:#94A1A9;
+  --line:#2A343C;
+  --line-strong:#3A4750;
+  --flag:#E4917A;
+  --flag-soft:#37211B;
+  --good:#74C298;
+  --accent:#7FC7BE;
+  --accent:color-mix(in srgb, var(--p1) 48%, #EDF4F2);
+  --accent-2:#D9B778;
+  --accent-2:color-mix(in srgb, var(--p2) 52%, #F4EEE0);
+  --accent-soft:#1D2E31;
+  --accent-soft:color-mix(in srgb, var(--p1) 30%, var(--surface));
+  --accent-2-soft:#2B2A20;
+  --accent-2-soft:color-mix(in srgb, var(--p2) 26%, var(--surface));
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Sans TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px 96px}
+
+/* ===== masthead ===== */
+.masthead{border-bottom:2px solid var(--ink);padding:44px 0 22px;margin-bottom:24px}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent);
+  font-weight:600;margin:0 0 14px;
+}
+h1{
+  font-family:"Noto Serif TC",Georgia,serif;font-weight:700;
+  font-size:clamp(30px,5vw,46px);line-height:1.2;margin:0 0 10px;
+  text-wrap:balance;letter-spacing:-.01em;
+}
+.dek{font-size:17px;color:var(--muted);margin:0;max-width:60ch}
+.logistics{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);
+  margin-top:26px;border-radius:3px;overflow:hidden;
+}
+.logistics div{background:var(--surface);padding:12px 14px}
+.logistics dt{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 4px;
+}
+.logistics dd{margin:0;font-size:14px;font-weight:500;line-height:1.5}
+
+/* ===== palette picker (always visible) ===== */
+.palette{
+  margin:22px 0 0;border:1px solid var(--line);border-radius:5px;
+  background:var(--surface);box-shadow:var(--shadow);padding:16px 18px;
+}
+.phead{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+.pdot{display:inline-flex}
+.pdot i{width:13px;height:13px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.08)}
+.pdot i:last-child{margin-left:-4px}
+.phead h2{
+  font-family:"Noto Sans TC",sans-serif;font-size:14px;font-weight:700;
+  margin:0;letter-spacing:.01em;
+}
+.palette .hint{font-size:12.5px;color:var(--muted);margin:0 0 13px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:8px}
+.swatch{
+  display:flex;align-items:center;gap:10px;padding:9px 11px;
+  border:1px solid var(--line);border-radius:5px;background:var(--surface);
+  cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);
+  transition:border-color .14s,background .14s;
+}
+.swatch:hover{border-color:var(--line-strong);background:var(--surface-2)}
+.swatch:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.swatch[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.swatch .chips{display:flex;flex:none}
+.swatch .chips i{width:16px;height:16px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.08)}
+.swatch .chips i:last-child{margin-left:-5px}
+.swatch .txt{min-width:0}
+.swatch .nm{display:block;font-size:13px;font-weight:500;line-height:1.35}
+.swatch .sb{display:block;font-size:11px;color:var(--muted);line-height:1.35}
+.swatch .tick{margin-left:auto;color:var(--accent);font-size:13px;opacity:0;flex:none}
+.swatch[aria-pressed="true"] .tick{opacity:1}
+
+
+.palette .prow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.palette .plabel{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);font-weight:600;min-width:40px;
+}
+.ggrid{display:flex;gap:7px;flex-wrap:wrap}
+.gbtn{
+  display:inline-flex;align-items:center;gap:7px;padding:6px 12px;
+  border:1px solid var(--line);border-radius:20px;background:var(--surface);
+  cursor:pointer;font-family:inherit;font-size:12.5px;color:var(--ink);
+  transition:border-color .14s,background .14s;
+}
+.gbtn:hover{border-color:var(--line-strong);background:var(--surface-2)}
+.gbtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.gbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:500}
+.gsw{width:13px;height:13px;border-radius:50%;display:block;border:1px solid var(--line-strong);flex:none}
+.gsw.light{background:#FFFFFF}
+.gsw.dark{background:#10171B}
+.gsw.auto{background:linear-gradient(135deg,#FFFFFF 0 50%,#10171B 50% 100%)}
+.palette .divider{height:1px;background:var(--line);margin:13px 0}
+
+/* ===== nav ===== */
+nav{display:flex;flex-wrap:wrap;gap:6px;padding:22px 0 0;margin-bottom:40px}
+nav a{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.04em;
+  color:var(--muted);text-decoration:none;padding:5px 10px;
+  border:1px solid var(--line);border-radius:2px;background:var(--surface);transition:.14s;
+}
+nav a:hover,nav a:focus-visible{color:var(--accent);border-color:var(--accent);outline:none}
+
+/* ===== sections ===== */
+section{margin:0 0 56px;scroll-margin-top:20px}
+.sechead{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line-strong);padding-bottom:8px;margin-bottom:24px}
+.secnum{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.08em}
+.sechead h2{font-family:"Noto Serif TC",Georgia,serif;font-weight:600;font-size:23px;margin:0;line-height:1.35}
+h3{font-size:16px;font-weight:700;margin:28px 0 10px}
+p{margin:0 0 12px}
+.lead{font-size:15px;color:var(--muted);margin-bottom:20px;max-width:66ch}
+
+.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:3px;padding:16px 18px;box-shadow:var(--shadow)}
+.dcard.hot{border-top-color:var(--flag)}
+.dcard .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;display:block;margin-bottom:8px}
+.dcard.hot .tag{color:var(--flag)}
+.dcard h4{margin:0 0 6px;font-size:15.5px;font-weight:700;line-height:1.45}
+.dcard p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.6}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:20px 22px;box-shadow:var(--shadow)}
+.card.them{border-left:3px solid var(--accent-2)}
+.card.us{border-left:3px solid var(--accent)}
+.card h3{margin:0 0 2px;font-size:17px;font-family:"Noto Serif TC",Georgia,serif;font-weight:600}
+.card .sub{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.04em;margin:0 0 14px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13.5px;line-height:1.6}
+.kv dt{color:var(--muted);white-space:nowrap;font-size:12.5px}
+.kv dd{margin:0}
+.note{margin-top:14px;padding:10px 12px;background:var(--surface-2);border-radius:2px;font-size:13px;line-height:1.6}
+.note strong{color:var(--flag)}
+
+.lineup{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:6px}
+.pcat{border:1px solid var(--line);border-radius:3px;background:var(--surface);padding:14px 16px}
+.pcat.food{border-color:var(--flag);border-width:1px 1px 1px 3px;background:var(--flag-soft)}
+.pcat h4{margin:0 0 3px;font-size:14px;font-weight:700}
+.pcat .jp{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);letter-spacing:.03em;margin:0 0 9px}
+.pcat ul{margin:0;padding-left:16px}
+.pcat li{font-size:13px;line-height:1.6;margin-bottom:3px}
+.pcat .price{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;display:block}
+
+.tl{list-style:none;padding:0;margin:0;border-left:2px solid var(--line-strong)}
+.tl li{position:relative;padding:0 0 18px 22px}
+.tl li::before{content:"";position:absolute;left:-5px;top:9px;width:8px;height:8px;border-radius:50%;background:var(--line-strong)}
+.tl li.hot::before{background:var(--flag);box-shadow:0 0 0 3px var(--flag-soft)}
+.tl .d{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);display:block}
+.tl .t{font-size:14px;line-height:1.6}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+caption{text-align:left;padding:14px 18px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line);line-height:1.6}
+th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface-2);white-space:nowrap}
+tbody th{font-weight:500;color:var(--muted);font-size:13px;white-space:nowrap}
+td.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:13px}
+tr.risk td,tr.risk th{background:var(--flag-soft)}
+tr.risk td:last-child{color:var(--flag);font-weight:700}
+tr.ok td:last-child{color:var(--good);font-weight:600}
+.delta{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-variant-numeric:tabular-nums}
+
+.agenda{list-style:none;padding:0;margin:0;counter-reset:ag}
+.agenda li{counter-increment:ag;display:grid;grid-template-columns:36px 1fr auto;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line)}
+.agenda li::before{content:counter(ag,decimal-leading-zero);font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--accent)}
+.agenda .topic{font-size:15px;font-weight:500;line-height:1.55}
+.agenda .topic small{display:block;font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
+.agenda .mins{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.agenda li.key .topic{font-weight:700}
+.agenda li.key::before{color:var(--flag)}
+
+.qblock{border:1px solid var(--line);border-radius:3px;background:var(--surface);overflow:hidden;box-shadow:var(--shadow)}
+.qblock + .qblock{margin-top:22px}
+.qhead{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.qblock.dc .qhead,.qblock.sc .qhead{background:var(--accent-soft);border-bottom-color:var(--accent)}
+.qblock.pd .qhead{background:var(--accent-2-soft);border-bottom-color:var(--accent-2)}
+.qhead h3{margin:0;font-size:16px;font-family:"Noto Serif TC",Georgia,serif;font-weight:600}
+.who{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.qblock.dc .who,.qblock.sc .who{color:var(--accent)}
+.qblock.pd .who{color:var(--accent-2)}
+.qlist{list-style:none;margin:0;padding:6px 20px 16px}
+.qlist li{display:flex;gap:11px;padding:9px 0;border-bottom:1px dashed var(--line);align-items:flex-start}
+.qlist li:last-child{border-bottom:none}
+.qlist input[type="checkbox"]{margin:5px 0 0;width:14px;height:14px;flex:none;accent-color:var(--accent);cursor:pointer}
+.qblock.pd .qlist input[type="checkbox"]{accent-color:var(--accent-2)}
+.qlist .q{font-size:14.5px;line-height:1.6;cursor:pointer}
+.qlist .why{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.55}
+.must{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;font-weight:600;color:var(--flag);border:1px solid var(--flag);border-radius:2px;padding:1px 5px;margin-right:6px;white-space:nowrap}
+
+.callout{border:1px solid var(--flag);border-left-width:3px;background:var(--flag-soft);border-radius:3px;padding:16px 20px;margin:22px 0}
+.callout .lbl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--flag);font-weight:600;display:block;margin-bottom:7px}
+.callout p{font-size:14px;line-height:1.7;margin:0 0 8px}
+.callout p:last-child{margin-bottom:0}
+.callout .quote{font-family:"Noto Serif TC",Georgia,serif;font-size:15px;line-height:1.7;border-left:2px solid var(--flag);padding-left:14px;margin:10px 0}
+.stance{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:18px 20px;margin-top:16px;box-shadow:var(--shadow)}
+.stance .lbl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--good);font-weight:600;display:block;margin-bottom:8px}
+.stance .line{font-family:"Noto Serif TC",Georgia,serif;font-size:16px;line-height:1.65;padding:12px 16px;background:var(--accent-soft);border-radius:2px;margin:10px 0}
+
+.script{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:3px;background:var(--surface);padding:18px 20px;box-shadow:var(--shadow)}
+.script .lbl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;display:block;margin-bottom:10px}
+.script ul{margin:0;padding-left:18px}
+.script li{font-size:14.5px;line-height:1.7;margin-bottom:9px}
+
+ul.plain{margin:0 0 12px;padding-left:20px}
+ul.plain li{margin-bottom:6px;font-size:14.5px;line-height:1.65}
+
+footer{border-top:1px solid var(--line);margin-top:20px;padding-top:18px;font-size:12.5px;color:var(--muted);line-height:1.7}
+footer code{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
+
+@media (max-width:640px){
+  .wrap{padding:0 16px 64px}
+  .agenda li{grid-template-columns:28px 1fr;gap:10px}
+  .agenda .mins{grid-column:2;margin-top:-4px}
+}
+@media print{
+  body{background:#fff}
+  .palette,nav{display:none}
+  .card,.qblock,.dcard,.script,.stance{box-shadow:none;break-inside:avoid}
+  section{break-inside:avoid-page}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">會前簡報 · 第一次會議 · 供應鏈部 × 產品開發</p>
+  <h1>日本製貓用化毛膏<br>KITAGAWA 開發會談</h1>
+  <p class="dek">與日商西北國際 Lawrence 首次面談。第一次見面重在互相認識與建立信任，同時把三個關鍵答案帶回來。</p>
+
+  <dl class="logistics">
+    <div><dt>日期</dt><dd>2026/08/20（四）下午</dd></div>
+    <div><dt>地點</dt><dd>新莊 寰宇一號 16F</dd></div>
+    <div><dt>我方</dt><dd>黃文傳 John（供應鏈）<br>徐維亨 Tommy（產品開發）</dd></div>
+    <div><dt>對方</dt><dd>Lawrence（西北 台灣）</dd></div>
+    <div><dt>品牌</dt><dd>優固倍 Yakupet</dd></div>
+  </dl>
+
+  <div class="palette">
+    <div class="phead">
+      <span class="pdot"><i style="background:var(--p1)"></i><i style="background:var(--p2)"></i></span>
+      <h2>配色主題</h2>
+    </div>
+    <p class="hint">底色與主色都可以自己選，只改動本頁視覺，內容不變。選擇會自動記住。</p>
+
+    <div class="prow">
+      <span class="plabel">底色</span>
+      <div class="ggrid" id="ggrid">
+        <button type="button" class="gbtn" data-mode="light" aria-pressed="false"><span class="gsw light"></span>淺色白底</button>
+        <button type="button" class="gbtn" data-mode="dark" aria-pressed="false"><span class="gsw dark"></span>深色</button>
+        <button type="button" class="gbtn" data-mode="auto" aria-pressed="true"><span class="gsw auto"></span>跟隨系統</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="prow"><span class="plabel">主色</span></div>
+    <div class="pgrid" id="pgrid">
+      <button type="button" class="swatch" data-key="ink" aria-pressed="true">
+        <span class="chips"><i style="background:#0E5C57"></i><i style="background:#8A6A17"></i></span>
+        <span class="txt"><span class="nm">深青墨</span><span class="sb">預設 · 規格書</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="steel" aria-pressed="false">
+        <span class="chips"><i style="background:#1F4E79"></i><i style="background:#B26A00"></i></span>
+        <span class="txt"><span class="nm">靛藍鋼</span><span class="sb">沉穩商務</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="forest" aria-pressed="false">
+        <span class="chips"><i style="background:#2B5D3A"></i><i style="background:#9A6B25"></i></span>
+        <span class="txt"><span class="nm">森綠</span><span class="sb">天然草本</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="clay" aria-pressed="false">
+        <span class="chips"><i style="background:#8C3A2E"></i><i style="background:#2E6E6A"></i></span>
+        <span class="txt"><span class="nm">陶紅</span><span class="sb">溫暖手感</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="wisteria" aria-pressed="false">
+        <span class="chips"><i style="background:#5B4A8A"></i><i style="background:#A8642A"></i></span>
+        <span class="txt"><span class="nm">紫藤</span><span class="sb">優雅</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="amber" aria-pressed="false">
+        <span class="chips"><i style="background:#A85527"></i><i style="background:#2F6B62"></i></span>
+        <span class="txt"><span class="nm">琥珀橙</span><span class="sb">明亮活力</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="sakura" aria-pressed="false">
+        <span class="chips"><i style="background:#B04A6E"></i><i style="background:#4A6FA5"></i></span>
+        <span class="txt"><span class="nm">桃櫻粉</span><span class="sb">甜柔</span></span><span class="tick">✓</span>
+      </button>
+      <button type="button" class="swatch" data-key="neon" aria-pressed="false">
+        <span class="chips"><i style="background:#0E7C8A"></i><i style="background:#B8503F"></i></span>
+        <span class="txt"><span class="nm">霓虹青</span><span class="sb">鮮明</span></span><span class="tick">✓</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <a href="#goals">本次會議目標</a>
+  <a href="#them">對方是誰</a>
+  <a href="#lineup">★ 他們的產品線</a>
+  <a href="#us">我方介紹</a>
+  <a href="#history">案件進程</a>
+  <a href="#spec">★ 規格對照</a>
+  <a href="#agenda">議程</a>
+  <a href="#q-discover">認識對方提問</a>
+  <a href="#q-pd">產品開發提問</a>
+  <a href="#q-sc">供應鏈提問</a>
+  <a href="#contract">合約立場</a>
+</nav>
+
+<section id="goals">
+  <div class="sechead"><span class="secnum">A</span><h2>本次會議的目標</h2></div>
+  <p class="lead">第一次見面，不必求定案。把關係建立起來、把對方的底摸清楚，並帶回三個關鍵答案，就算成功。</p>
+  <div class="decisions">
+    <div class="dcard">
+      <span class="tag">目標一</span>
+      <h4>互相認識，建立長期合作的基礎</h4>
+      <p>讓對方認識騰勢的規模、通路與既有日本製實績；同時了解 KITAGAWA 的事業組成、產能與研發方式。這決定後續信任的厚度。</p>
+    </div>
+    <div class="dcard hot">
+      <span class="tag">目標二</span>
+      <h4>帶回三個關鍵答案</h4>
+      <p>① 常溫流通做不做得到　② 軟管與分包的單價與 MOQ　③ 配方共有的界線怎麼畫。這三題不必當場定案，但要問到。</p>
+    </div>
+    <div class="dcard">
+      <span class="tag">目標三</span>
+      <h4>敲定下一步與樣品交換</h4>
+      <p>確認合約範本的交付時間、樣品互寄的地址與時程，以及下次會議的形式與時間。散會前要有明確的 action。</p>
+    </div>
+  </div>
+</section>
+
+<section id="them">
+  <div class="sechead"><span class="secnum">B</span><h2>對方是誰</h2></div>
+  <p class="lead">兩個角色要分清楚：西北是居中的貿易商，KITAGAWA 才是真正動手做的工廠。技術問題西北無法拍板，都要轉一手。</p>
+  <div class="cols">
+    <div class="card them">
+      <h3>日商西北國際股份有限公司</h3>
+      <p class="sub">NWI HOLDINGS INC.　／　仲介・貿易商</p>
+      <dl class="kv">
+        <dt>台灣</dt><dd>台北市大安區仁愛路四段85號3樓<br>+886-2-2772-7608</dd>
+        <dt>窗口</dt><dd>Lawrence（台灣）／ 金先生（大阪本社）</dd>
+        <dt>日本母體</dt><dd>西北貿易株式会社（1976年7月設立）</dd>
+        <dt>集團</dt><dd>NWI group — 西北貿易、NeW AGE Industry、デルパンジャパン、I'MPRESSION JAPAN、井入農園</dd>
+        <dt>本業</dt><dd>半導體與液晶材料。日產化學的台灣銷售代理</dd>
+        <dt>與我方</dt><dd>中日本カプセル的台灣代理；去年曾隨中日本カプセル拜訪敝公司</dd>
+      </dl>
+      <p class="note">本業是半導體材料，<strong>不是食品或寵物產業</strong>。立場中性、不會競爭；代價是技術與法規問題他們無法判斷，都得轉給 KITAGAWA。這也是為什麼我方提供的法規資訊他們特別感謝。</p>
+    </div>
+    <div class="card them">
+      <h3>有限会社キタガワ（KITAGAWA）</h3>
+      <p class="sub">實際製造方　／　大阪府寝屋川市東神田町6-1</p>
+      <dl class="kv">
+        <dt>代表</dt><dd>北川 健司 社長</dd>
+        <dt>設立</dt><dd>2000年4月28日</dd>
+        <dt>規模</dt><dd>資本金 300 萬日圓／員工 11 名</dd>
+        <dt>電話</dt><dd>072-801-7771</dd>
+        <dt>事業部</dt><dd>寵物、化粧品、縫製</dd>
+        <dt>直營店</dt><dd>犬の家 copain（大阪 枚方）</dd>
+        <dt>通路</dt><dd>直營店、自社通販、寵物展、動物病院</dd>
+      </dl>
+      <p class="note"><strong>北川社長每年赴德國參展</strong>，清楚 GimCat 這類食品原料系化毛膏。公司規模小但通路完整——製造、零售、展會都自己來。</p>
+    </div>
+  </div>
+</section>
+
+<section id="lineup">
+  <div class="sechead"><span class="secnum">C</span><h2>★ KITAGAWA 現在做哪些產品</h2></div>
+  <p class="lead">自社通販共 143 件商品。查完之後結論很明確：他們的重心是<strong>寵物美容與護理用品</strong>，可食用產品只有一支。</p>
+  <div class="lineup">
+    <div class="pcat">
+      <h4>美容圍裙</h4><p class="jp">トリミングエプロン</p>
+      <ul>
+        <li>防水圍裙 扣環式（多款圖案）<span class="price">¥4,224</span></li>
+        <li>超輕量高機能圍裙 4 色<span class="price">¥6,468</span></li>
+        <li>DX 防水圍裙 豪華型<span class="price">¥5,214</span></li>
+      </ul>
+    </div>
+    <div class="pcat">
+      <h4>美容工具</h4><p class="jp">グルーミング</p>
+      <ul><li>ProGrip 針梳 2（高密集／一般針）<span class="price">¥4,180</span></li></ul>
+    </div>
+    <div class="pcat">
+      <h4>洗劑</h4><p class="jp">シャンプー・リンス</p>
+      <ul>
+        <li>シャンメシャン 自然的洗毛精／潤絲 250ml<span class="price">¥2,750</span></li>
+        <li>補充包 230ml<span class="price">¥2,420</span></li>
+        <li>大容量補充 2050ml<span class="price">¥10,120</span></li>
+      </ul>
+    </div>
+    <div class="pcat">
+      <h4>護理用品</h4><p class="jp">ケア用品</p>
+      <ul>
+        <li>Bio 耳部清潔液 20／100／200ml<span class="price">¥770–3,520</span></li>
+        <li>自然的護理霜<span class="price">¥3,080</span></li>
+        <li>Super 除臭<span class="price">¥1,540</span></li>
+      </ul>
+    </div>
+    <div class="pcat">
+      <h4>皮件</h4><p class="jp">シザーケース</p>
+      <ul><li>真皮剪刀套 各式<span class="price">¥21,780–25,300</span></li></ul>
+    </div>
+    <div class="pcat food">
+      <h4>可食用膏體　←　本案相關</h4><p class="jp">おくすりちょーだい</p>
+      <ul>
+        <li>軟管 50g<span class="price">¥1,705</span></li>
+        <li>軟管 130g<span class="price">¥2,420</span></li>
+        <li>分包 10g×5<span class="price">¥1,562</span></li>
+        <li>分包 10g×13<span class="price">¥2,200</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <span class="lbl">這份產品線告訴我們三件事</span>
+    <p><strong>一、他們是寵物美容／護理用品廠商，食品是副線。</strong>143 件商品裡，可食用的只有「おくすりちょーだい」一支。我方要問的是：這支的製造經驗有多深？是自社工廠還是委外？</p>
+    <p><strong>二、官網完全沒有「OEM 受託製造」的字樣。</strong>呼應 Lawrence 說的「KITAGAWA 是第一次和台灣客戶開這樣的 OEM 案」——實際上可能是他們第一次對外承接 OEM。這代表流程要我方多帶一點，但也代表他們不會拿我方配方去服務其他客戶。</p>
+    <p><strong>三、「自然の」是他們的一貫標籤。</strong>洗毛精、護理霜都掛「自然的」，呼應 Lawrence 說「KITAGAWA 開發的產品都使用天然成分」。這與我方純植物與酵母來源的配方方向一致，是很好的共同語言。</p>
+  </div>
+</section>
+
+<section id="us">
+  <div class="sechead"><span class="secnum">D</span><h2>我方介紹</h2></div>
+  <p class="lead">第一次見面，對方也想知道我們是誰、規模多大、有沒有能力把案子做完。以下是可以直接講的素材。</p>
+  <div class="cols">
+    <div class="card us">
+      <h3>騰勢股份有限公司 TSA GROUP</h3>
+      <p class="sub">統一編號 54506580　／　新北市新莊區新北大道三段218號16樓</p>
+      <dl class="kv">
+        <dt>業務</dt><dd>人用保健食品與寵物保健／寵物食品之企劃、研發、進口與銷售</dd>
+        <dt>人用品牌</dt><dd>達摩本草、御熹堂、PowerHero、芙木之光</dd>
+        <dt>寵物品牌</dt><dd>毛孩時代、<strong>優固倍 Yakupet</strong></dd>
+        <dt>通路</dt><dd>以電商為主：自有官網、蝦皮、momo 等；另有實體通路與獨規合作（如大樹藥局）</dd>
+        <dt>國際採購</dt><dd>日本、西班牙、中國等地，具原料與成品進口實績</dd>
+        <dt>公司階段</dt><dd>IPO 規劃中，供應商評鑑與文件要求較嚴謹</dd>
+      </dl>
+      <p class="note">本案由<strong>優固倍（Yakupet）</strong>品牌開發。Yakupet 現有產品線為機能粉包（優固關、優固腸等），化毛膏是品類擴張。</p>
+    </div>
+    <div class="card us">
+      <h3>本案產品目標</h3>
+      <p class="sub">對標 德國 GimCat（GimPet）麥芽化毛膏 100g</p>
+      <dl class="kv">
+        <dt>品項</dt><dd>貓用化毛膏（毛球護理膏），<strong>經口食用</strong>，非外用</dd>
+        <dt>機制</dt><dd>麥芽糖與膳食纖維促進吞入的毛球隨糞便排出</dd>
+        <dt>基質</dt><dd>麥芽萃取物＋植物油脂（含亞麻仁油）＋纖維素＋酵母（β-葡聚醣）</dd>
+        <dt>包裝</dt><dd>積層軟管 100g（另評估 50g）</dd>
+        <dt>流通</dt><dd><strong>常溫</strong></dd>
+        <dt>台灣分類</dt><dd>寵物食品（補助食），不做醫療機能訴求</dd>
+      </dl>
+      <p class="note">法規已於 8/11 經食品所書面確認：<strong>配方不含動物性成分時，日本工廠免列入核定名單、免赴日實地查核</strong>，僅需我方在台申報。</p>
+    </div>
+  </div>
+
+  <h3>自我介紹重點（可直接講）</h3>
+  <div class="script">
+    <span class="lbl">開場 3–5 分鐘</span>
+    <ul>
+      <li><strong>我們是誰</strong>：騰勢是台灣的保健品牌經營者，人用與寵物線並行。人用有達摩本草、御熹堂、PowerHero；寵物有毛孩時代與優固倍 Yakupet。主戰場在電商。</li>
+      <li><strong>我們已經在做日本製</strong>：達摩本草的痛風膠囊、消化道益生菌，御熹堂的 UC2，以及優固倍的機能粉包，都是日本製造進口。日本製的法規、文件、物流流程我方熟悉，<strong>不需要對方從頭教</strong>。</li>
+      <li><strong>為什麼找 KITAGAWA</strong>：我方希望建立第二條日本代工管道，而化毛膏這個劑型在日本很少見。中日本カプセル 介紹了西北，西北找到了 KITAGAWA——我們很珍惜這個緣分。</li>
+      <li><strong>我方的分工</strong>：Tommy 負責配方與規格，John 負責報價、MOQ、交期與台灣輸入文件。兩邊都可以直接聯繫。</li>
+      <li><strong>我方能提供什麼</strong>：完整規格書、參考品實物、台灣法規解讀（已由食品所背書）、以及合約範本。<strong>我方希望盡量降低 KITAGAWA 的配合負擔。</strong></li>
+      <li><strong>我方的期待</strong>：這不是一次性的買賣。若這支成功，優固倍與毛孩時代還有其他品項可以一起談。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="history">
+  <div class="sechead"><span class="secnum">E</span><h2>案件進程</h2></div>
+  <ul class="tl">
+    <li><span class="d">08/05–08/06</span><span class="t">向多家日本廠詢價。中日本カプセル婉拒（膠囊廠），但轉介其台灣代理西北貿易。</span></li>
+    <li><span class="d">08/06</span><span class="t">安琪（中日本カプセル）直接轉寄需求給西北四位窗口，我方同日接話。</span></li>
+    <li><span class="d">08/07</span><span class="t">Lawrence 於 LINE 群組回報：北川社長討論後，<strong>KITAGAWA 可以做化毛膏</strong>。金先生（大阪本社）加入群組。</span></li>
+    <li><span class="d">08/10</span><span class="t">我方補正兩項關鍵資訊：本品為口服非外用；並釐清「麥芽植物油系」與日本主流「凡士林礦物油系」的差別。</span></li>
+    <li><span class="d">08/12</span><span class="t">我方轉達法規利多（工廠免登記、免查核），並詢問合約方向四題。</span></li>
+    <li><span class="d">08/13</span><span class="t">北川社長赴西北大阪本社當面討論。</span></li>
+    <li class="hot"><span class="d">08/18</span><span class="t">Lawrence 書面回覆五點：基質已對齊、確認 KITAGAWA 現有膏體實績、賞味期限建議、<strong>建議改用鋁箔分包</strong>、合約與開發費條件。並提出 8/20 來新莊面談。</span></li>
+    <li class="hot"><span class="d">08/20</span><span class="t">本次會談。</span></li>
+  </ul>
+</section>
+
+<section id="spec">
+  <div class="sechead"><span class="secnum">F</span><h2>★ 他們現有產品 vs 我方目標</h2></div>
+  <p class="lead">「おくすりちょーだい」是判斷可行性最實在的證據。兩者同屬「糖漿＋植物油脂」技術家族，代表這不是從零開發，而是調整。但有一項差異是紅線。</p>
+  <div class="tablewrap">
+    <table>
+      <caption>資料來源：inunoie.com 產品頁（KITAGAWA 官方）／ GimCat 專業版台灣販售頁。單位為每 100g。</caption>
+      <thead><tr><th>項目</th><th>おくすりちょーだい<br>（KITAGAWA 現有）</th><th>GimCat<br>（我方目標）</th><th>差距與判讀</th></tr></thead>
+      <tbody>
+        <tr class="risk"><th>保存條件</th><td>冷所保管（建議冷藏，防褐變）</td><td>常溫</td><td>★ 最大技術風險</td></tr>
+        <tr><th>水分</th><td class="num">20.3%</td><td class="num">12%</td><td><span class="delta">−8.3pt</span>　需更低水活性</td></tr>
+        <tr><th>脂質 / 粗脂肪</th><td class="num">31.5%</td><td class="num">38.5%</td><td><span class="delta">+7.0pt</span>　同一量級</td></tr>
+        <tr><th>蛋白質</th><td class="num">4.1%</td><td class="num">5.5%</td><td><span class="delta">+1.4pt</span>　差異小</td></tr>
+        <tr><th>灰分</th><td class="num">0.5%</td><td class="num">5.0%</td><td><span class="delta">+4.5pt</span>　需加維生素礦物質</td></tr>
+        <tr><th>糖質</th><td class="num">43.6%</td><td>麥芽萃取物為主</td><td>基質邏輯一致</td></tr>
+        <tr><th>基質原料</th><td>還元水飴、植物油脂、加工起司、乳蛋白、乳胜肽、香料</td><td>麥芽萃取物、纖維素、油脂、亞麻仁油、酵母（β-葡聚醣）</td><td>糖漿＋油脂系，可移植</td></tr>
+        <tr class="ok"><th>包裝規格</th><td>軟管 50g／130g<br>分包 10g×5／10g×13</td><td>軟管 100g</td><td>130g 涵蓋 100g　✓</td></tr>
+        <tr><th>賞味期限</th><td class="num">1 年半（未開封）</td><td>—</td><td>需區分未開封／開封後</td></tr>
+        <tr><th>熱量</th><td class="num">474 kcal</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <span class="lbl">紅線：常溫 vs 冷藏</span>
+    <p>KITAGAWA 現有膏體標示「冷所にて保管してください」，官方說明是<strong>為了防止褐色變色</strong>——他們的配方含加工起司與乳蛋白，糖與乳蛋白在常溫下會發生梅納反應而褐變。</p>
+    <p>我方配方<strong>不含乳蛋白</strong>（純植物與酵母來源），理論上褐變風險較低。但這是推論，不是他們的實績。</p>
+    <p class="quote">若 KITAGAWA 的膏體技術只驗證到冷藏流通，我方的電商常溫倉配模式會直接卡住——這一題必須今天問清楚。</p>
+  </div>
+</section>
+
+<section id="agenda">
+  <div class="sechead"><span class="secnum">G</span><h2>建議議程（60–75 分鐘）</h2></div>
+  <p class="lead">第一次見面，前三分之一給互相認識，不要一坐下就談價格。</p>
+  <ol class="agenda">
+    <li><div class="topic">開場與互相介紹<small>我方先講（見「自我介紹重點」），再請 Lawrence 介紹西北與 KITAGAWA</small></div><span class="mins">10 min</span></li>
+    <li><div class="topic">認識 KITAGAWA<small>事業組成、產品線、製造能力、研發方式 — 見「認識對方提問」</small></div><span class="mins">15 min</span></li>
+    <li class="key"><div class="topic">技術可行性：常溫流通與規格差距<small>本次最重要的一題。若常溫無解，後面的討論前提會變</small></div><span class="mins">15 min</span></li>
+    <li class="key"><div class="topic">包裝方向：軟管 vs 鋁箔分包<small>要對方先給兩種的單價差距與各自 MOQ，我方才有辦法決定</small></div><span class="mins">10 min</span></li>
+    <li class="key"><div class="topic">合約框架與開發費<small>配方共有的界線、開發費涵蓋範圍、範本交付時程</small></div><span class="mins">15 min</span></li>
+    <li><div class="topic">樣品交換與下一步<small>當場確認誰在什麼時間前交出什麼</small></div><span class="mins">10 min</span></li>
+  </ol>
+</section>
+
+<section id="q-discover">
+  <div class="sechead"><span class="secnum">H</span><h2>提問清單</h2></div>
+
+  <div class="qblock dc">
+    <div class="qhead"><span class="who">第一次會議 · 認識對方</span><h3>先問這組，破冰也是情報蒐集</h3></div>
+    <ul class="qlist">
+      <li><input type="checkbox" id="d1"><label for="d1" class="q"><span class="must">必問</span>「おくすりちょーだい」是<strong>KITAGAWA 自社工廠生產，還是委託其他工廠代工？</strong>工廠在哪裡？<span class="why">這題決定一切。若是委外，KITAGAWA 只是企劃者，真正的工廠是第三方，等於又多一層。</span></label></li>
+      <li><input type="checkbox" id="d2"><label for="d2" class="q"><span class="must">必問</span>貴社是否具備<strong>食品製造許可</strong>？產線位於何處？有無 HACCP／ISO／GMP 等認證？<span class="why">我方為 IPO 規劃中公司，供應商評鑑需要這些文件。</span></label></li>
+      <li><input type="checkbox" id="d3"><label for="d3" class="q">貴社過去<strong>有無對外承接 OEM 的實績</strong>？本案是第一次嗎？<span class="why">官網完全沒有 OEM 字樣。若是第一次，流程要我方多帶一點，但配方外流風險也低。</span></label></li>
+      <li><input type="checkbox" id="d4"><label for="d4" class="q">貴社三個事業部（寵物、化粧品、縫製）的<strong>比重大約如何</strong>？寵物是主力嗎？<span class="why">了解對方把資源放在哪，判斷本案在他們心中的優先度。</span></label></li>
+      <li><input type="checkbox" id="d5"><label for="d5" class="q">除了「おくすりちょーだい」，貴社<strong>還有其他可食用產品嗎</strong>？<span class="why">我方查到的 143 件商品中只有這一支可食用，想確認是否有未上架的品項。</span></label></li>
+      <li><input type="checkbox" id="d6"><label for="d6" class="q">貴社的<strong>研發團隊規模與組成</strong>？一年大約開發幾支新品？<span class="why">11 人的公司，研發量能決定本案的排程與交期。</span></label></li>
+      <li><input type="checkbox" id="d7"><label for="d7" class="q">從企劃到上市，貴社<strong>典型的開發週期</strong>多長？<span class="why">用來對照我方希望的時程，避免期待落差。</span></label></li>
+      <li><input type="checkbox" id="d8"><label for="d8" class="q">貴社的<strong>通路結構</strong>：直營店、自社通販、動物病院、寵物展，比重如何？<span class="why">他們主要走動物病院與專門店，對電商包裝與標示的慣例可能不熟。</span></label></li>
+      <li><input type="checkbox" id="d9"><label for="d9" class="q">貴社<strong>有無出口實績</strong>？出口到哪些國家？由誰負責出口作業？<span class="why">小型公司未必有出口能力，可能需要西北承接這段。</span></label></li>
+      <li><input type="checkbox" id="d10"><label for="d10" class="q">北川社長每年赴德國參展——是 Interzoo 嗎？<strong>觀察到哪些趨勢？</strong><span class="why">絕佳的破冰題。讓社長談專業，也能看出他對這個品類的理解深度。</span></label></li>
+      <li><input type="checkbox" id="d11"><label for="d11" class="q">「自然の」系列是貴社的一貫方針嗎？<strong>天然成分的堅持來自什麼？</strong><span class="why">與我方純植物與酵母配方方向一致，是很好的共同語言。</span></label></li>
+      <li><input type="checkbox" id="d12"><label for="d12" class="q">「犬の家 copain」直營店的定位？<strong>從零售第一線看到什麼樣的消費者需求？</strong><span class="why">他們有實體店，這是我方沒有的視角，值得聽。</span></label></li>
+      <li><input type="checkbox" id="d13"><label for="d13" class="q">除了化毛膏，<strong>貴社還有哪些產品可能適合台灣市場？</strong><span class="why">反向探詢。第一次見面就展現長期合作意願，比只談一支產品有效得多。洗毛精、耳液、護理霜都可能有機會。</span></label></li>
+      <li><input type="checkbox" id="d14"><label for="d14" class="q">（對西北）貴公司在<strong>寵物領域還有哪些日本客戶</strong>？服務範圍涵蓋採購、物流、報關到哪一段？<span class="why">了解西北能幫到什麼程度，也可能挖到其他日本廠資源。</span></label></li>
+    </ul>
+  </div>
+
+  <div class="qblock pd" id="q-pd">
+    <div class="qhead"><span class="who">產品開發 · Tommy</span><h3>配方、質地與測試</h3></div>
+    <ul class="qlist">
+      <li><input type="checkbox" id="p1"><label for="p1" class="q"><span class="must">必問</span>「おくすりちょーだい」標示冷所保管，<strong>KITAGAWA 有沒有常溫流通膏體的實績？</strong><span class="why">本案最大的技術紅線。我方需要常溫。</span></label></li>
+      <li><input type="checkbox" id="p2"><label for="p2" class="q">褐變是來自糖與乳蛋白的梅納反應嗎？<strong>若配方不含乳製品，常溫是否可行？</strong><span class="why">我方配方純植物與酵母來源，理論上風險較低，需對方確認。</span></label></li>
+      <li><input type="checkbox" id="p3"><label for="p3" class="q"><span class="must">必問</span>能否達到<strong>水分 12%／粗脂肪 38.5%</strong>？現有品為 20.3%／31.5%<span class="why">水分要再降 8 個百分點，是配方與製程的關鍵挑戰。</span></label></li>
+      <li><input type="checkbox" id="p4"><label for="p4" class="q">灰分要從 0.5% 提到 5.0%，<strong>維生素礦物質 premix 如何添加？</strong>會影響質地或適口性嗎？<span class="why">這是兩支產品差距最大的一項。</span></label></li>
+      <li><input type="checkbox" id="p5"><label for="p5" class="q">基質能否從<strong>還元水飴改為麥芽萃取物</strong>？來源、成本與供應穩定性如何？<span class="why">麥芽是 GimCat 的核心賣點，也是產品故事。</span></label></li>
+      <li><input type="checkbox" id="p6"><label for="p6" class="q">纖維素（食物纖維）的<strong>添加比例上限</strong>？對擠出手感的影響？<span class="why">纖維是化毛機制的關鍵，加太少沒效果，太多影響口感。</span></label></li>
+      <li><input type="checkbox" id="p7"><label for="p7" class="q">亞麻仁油的<strong>氧化安定性</strong>如何控制？使用哪種抗氧化劑？<span class="why">38% 高油脂＋亞麻仁油，氧化是保存期的主要風險。</span></label></li>
+      <li><input type="checkbox" id="p8"><label for="p8" class="q"><span class="must">必問</span><strong>適口性</strong>：純植物配方貓咪接受度如何？可否加入魚類或非牛源風味劑？<span class="why">台灣法規已確認：魚粉、魚油、動物油脂、乳品、萃取物、水解物、非牛源風味劑<strong>均不會觸發工廠登記</strong>。配方自由度比原先想的高。</span></label></li>
+      <li><input type="checkbox" id="p9"><label for="p9" class="q">樣品開發：<strong>幾輪、每輪多久、每輪提供幾種配方版本？</strong><span class="why">直接對應開發費是否合理。</span></label></li>
+      <li><input type="checkbox" id="p10"><label for="p10" class="q">保存試驗由誰執行？<strong>加速試驗條件與數據能否提供我方？</strong><span class="why">我方已與食品所接洽，可承接油脂氧化安定性與常溫保存期評估，可雙軌驗證。</span></label></li>
+      <li><input type="checkbox" id="p11"><label for="p11" class="q">軟管材質與<strong>阻隔性設計</strong>：38% 油脂對管材有無影響？<span class="why">長期保存時油脂滲透或管材劣化的風險。</span></label></li>
+      <li><input type="checkbox" id="p12"><label for="p12" class="q"><strong>未開封賞味期限</strong>與<strong>開封後使用期限</strong>各如何訂？依據是什麼？<span class="why">對方建議開封後先標 3 個月，但現有品未開封是 1 年半，兩者要分清楚。</span></label></li>
+      <li><input type="checkbox" id="p13"><label for="p13" class="q">是否使用防腐劑或抗氧化劑？種類與添加量？<span class="why">需比對台灣「寵物食品病原微生物與有害健康物質種類及安全容許量標準」。</span></label></li>
+    </ul>
+  </div>
+
+  <div class="qblock sc" id="q-sc">
+    <div class="qhead"><span class="who">供應鏈 · John</span><h3>商務、成本與風險</h3></div>
+    <ul class="qlist">
+      <li><input type="checkbox" id="s1"><label for="s1" class="q"><span class="must">必問</span>軟管與鋁箔分包，<strong>兩種的單價差距與各自 MOQ 分別是多少？</strong><span class="why">對方說「軟管費用較高」但沒給數字。沒有數字就無法做包裝決策。</span></label></li>
+      <li><input type="checkbox" id="s2"><label for="s2" class="q"><span class="must">必問</span>開發費 ¥50〜60 萬<strong>涵蓋幾輪樣品修改？支付時點為何？</strong><span class="why">若只含一輪，後續每次修改另計，實際成本會遠高於帳面。</span></label></li>
+      <li><input type="checkbox" id="s3"><label for="s3" class="q">若開發最終未能達到規格，<strong>開發費如何處理？</strong><span class="why">先講好，避免日後爭議。</span></label></li>
+      <li><input type="checkbox" id="s4"><label for="s4" class="q"><span class="must">必問</span>西北在本案的<strong>角色與收費方式</strong>：服務費、佣金，還是買賣價差？<span class="why">直接影響我方能否看到 KITAGAWA 的真實報價，以及未來換廠的自由度。</span></label></li>
+      <li><input type="checkbox" id="s5"><label for="s5" class="q">合約主體是<strong>三方簽署，還是我方直接與 KITAGAWA 簽？</strong>西北是簽約方還是見證方？<span class="why">牽涉未來的求償對象與溝通路徑。</span></label></li>
+      <li><input type="checkbox" id="s6"><label for="s6" class="q">量產報價的<strong>有效期與調價機制</strong>（原料波動、匯率變動如何處理）？<span class="why">對方說量產不另簽約，那價格的約束力寫在哪裡？</span></label></li>
+      <li><input type="checkbox" id="s7"><label for="s7" class="q">交期：<strong>首批與續單的生產前置期</strong>各多久？<span class="why">要避開日本三大長假：年末年始、黃金週、お盆。</span></label></li>
+      <li><input type="checkbox" id="s8"><label for="s8" class="q">貿易條件（EXW／FOB／CIF）與<strong>出口由誰負責</strong>？<span class="why">KITAGAWA 是 11 人的小公司，未必有出口實務能力。</span></label></li>
+      <li><input type="checkbox" id="s9"><label for="s9" class="q">付款條件與帳期？<span class="why">首批通常較嚴，先問清楚以便內部走流程。</span></label></li>
+      <li><input type="checkbox" id="s10"><label for="s10" class="q">若最終須<strong>冷藏流通</strong>，海運與倉儲成本的量級差多少？<span class="why">與技術題連動，先取得成本感。</span></label></li>
+      <li><input type="checkbox" id="s11"><label for="s11" class="q">彩盒、標籤等<strong>包材由誰設計與印製</strong>？我方可否自行提供？<span class="why">影響成本與上市時程。</span></label></li>
+      <li><input type="checkbox" id="s12"><label for="s12" class="q">台灣輸入所需文件（成分規格書、製造工程圖、原產地證明）<strong>能否配合提供</strong>？<span class="why">已確認不需工廠登記，但基本文件仍需備齊。</span></label></li>
+      <li><input type="checkbox" id="s13"><label for="s13" class="q">產品責任險與瑕疵批的處理方式？<span class="why">寵物食品出事的商譽代價高，先確認責任分擔。</span></label></li>
+    </ul>
+  </div>
+</section>
+
+<section id="contract">
+  <div class="sechead"><span class="secnum">I</span><h2>合約立場</h2></div>
+  <p class="lead">對方 8/18 已明確表態的四項條件，以及我方建議的因應。</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>對方提出</th><th>我方判讀</th><th>建議立場</th></tr></thead>
+      <tbody>
+        <tr><th>合約範本<br>由我方提供</th><td>KITAGAWA 首次承接台灣客戶 OEM 案，無現成版本</td><td><strong>這是優勢</strong>。出範本的人主導條款，把我方要的界線直接寫成起草內容，而不是事後爭取</td></tr>
+        <tr><th>開發費<br>¥50〜60 萬</th><td>約合新台幣 10〜13 萬（依匯率）。以配方開發＋樣品試作而言屬合理</td><td>接受金額，但要問清楚<strong>涵蓋幾輪修改、支付時點、開發未成功如何處理</strong></td></tr>
+        <tr><th>量產後<br>不需另簽合約</th><td>走一般訂單流程，作業順暢</td><td>好事，但要確認<strong>價格有效期與調價機制寫在哪裡</strong>，否則沒有約束力</td></tr>
+        <tr class="risk"><th>配方與 Know-how<br>雙方共有</th><td>共同開發的立場合理，但「共有」的實務界線未定義</td><td>見下方建議條文</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="stance">
+    <span class="lbl">建議談判立場</span>
+    <p>不要去爭「配方獨歸我方」——對方投入研發資源，一定不接受，而且會傷關係。改爭一條務實的地域與競業限制：</p>
+    <p class="line">配方與 Know-how 由雙方共有；惟 KITAGAWA 不得將本案配方用於供應台灣市場的其他客戶，亦不得用於自有品牌在台灣銷售。</p>
+    <p>對方的市場在日本，不在台灣，這條通常能接受。而我方要保的正是這個——付了開發費、投入了規格與市場知識，不能最後養出一個在台灣打自己的競爭品。</p>
+    <p><strong>既然範本由我方提供，這條直接寫進去，變成談判的起點而不是額外要求。</strong></p>
+  </div>
+
+  <h3>會後我方 action</h3>
+  <ul class="plain">
+    <li>準備開發合約範本（含 NDA），送內部法務與 Jason 確認</li>
+    <li>寄 GimCat 實品樣品至 KITAGAWA — 需向對方取得寄送地址與收件人</li>
+    <li>索取「おくすりちょーだい」樣品，建立雙方對質地的共同基準</li>
+    <li>包裝決策（軟管 vs 分包）— 取得單價與 MOQ 後，與 Jason、Tommy 內部拍板</li>
+    <li>食品所檢測委託：油脂氧化安定性、常溫保存期評估、五項營養成分分析</li>
+  </ul>
+</section>
+
+<footer>
+  <p>資料來源與日期：KITAGAWA 產品線與規格取自 <code>kitagawa7771.jp</code> 会社概要與ペット事業部頁、<code>shop.kitagawa7771.jp</code> 商品頁（143 件）、<code>inunoie.com/doseme</code> 產品頁；西北集團資料取自 <code>nwi.co.jp</code>；GimCat 規格取自台灣販售頁；法規結論取自財團法人食品工業發展研究所寵物食品研究團隊 2026/08/11 書面回覆及《犬貓食品輸入檢疫條件》；對方條件取自 Lawrence 2026/08/18 來信。</p>
+  <p>本簡報為內部會前準備資料 · 騰勢股份有限公司 供應鏈部 · 2026/08/19</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var KEY="tsa-kitagawa-palette";
+  var grid=document.getElementById("pgrid");
+  if(!grid) return;
+  var btns=Array.prototype.slice.call(grid.querySelectorAll(".swatch"));
+  function apply(key,save){
+    if(key && key!=="ink"){ document.documentElement.setAttribute("data-palette",key); }
+    else { document.documentElement.removeAttribute("data-palette"); key="ink"; }
+    btns.forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-key")===key ? "true":"false"); });
+    if(save){ try{ localStorage.setItem(KEY,key); }catch(e){} }
+  }
+  btns.forEach(function(b){
+    b.addEventListener("click",function(){ apply(b.getAttribute("data-key"),true); });
+  });
+  var saved=null;
+  try{ saved=localStorage.getItem(KEY); }catch(e){}
+  if(saved) apply(saved,false);
+
+  var GKEY="tsa-kitagawa-ground";
+  var ggrid=document.getElementById("ggrid");
+  if(ggrid){
+    var gbtns=Array.prototype.slice.call(ggrid.querySelectorAll(".gbtn"));
+    function setGround(mode,save){
+      if(mode==="light"||mode==="dark"){ document.documentElement.setAttribute("data-theme",mode); }
+      else { document.documentElement.removeAttribute("data-theme"); mode="auto"; }
+      gbtns.forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-mode")===mode ? "true":"false"); });
+      if(save){ try{ localStorage.setItem(GKEY,mode); }catch(e){} }
+    }
+    gbtns.forEach(function(b){
+      b.addEventListener("click",function(){ setGround(b.getAttribute("data-mode"),true); });
+    });
+    var gs=null;
+    try{ gs=localStorage.getItem(GKEY); }catch(e){}
+    setGround(gs||"auto",false);
+  }
+})();
+</script>
+</body>
+</html>
